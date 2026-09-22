@@ -101,8 +101,8 @@ a { color: inherit; }
   text-align: left; background: #fff; border: 5px solid var(--navy); border-radius: 44px 28px 48px 30px; box-shadow: var(--shadow); cursor: pointer;
   transition: transform .25s, box-shadow .25s;
 }
-.character-card:hover { transform: translateY(-8px) rotate(-1deg); box-shadow: 0 20px 0 rgba(28,40,92,.12), 0 30px 50px rgba(28,40,92,.2); }
-.mochi-card:hover { transform: translateY(-4px) rotate(1deg); }
+.character-card:hover { transform: translateY(-8px); box-shadow: 0 20px 0 rgba(28,40,92,.12), 0 30px 50px rgba(28,40,92,.2); }
+.mochi-card:hover { transform: translateY(-4px); }
 .character-card__tag { position: absolute; z-index: 2; top: 18px; left: 18px; padding: 6px 14px; background: var(--sun); border: 3px solid var(--navy); border-radius: 999px; font-weight: 1000; transform: rotate(-5deg); }
 .mochi-card .character-card__tag { background: var(--mint); transform: rotate(3deg); }
 .character-card__number { position: absolute; z-index: 2; top: 8px; right: 20px; color: rgba(28,40,92,.2); font-size: 4rem; font-weight: 1000; }
@@ -110,6 +110,10 @@ a { color: inherit; }
 .character-card__portrait img { width: 100%; height: 100%; object-fit: cover; transition: opacity .2s, transform .5s; }
 .puku-card .character-card__portrait img { object-position: center 30%; animation: puku-idle 1.9s cubic-bezier(.2,.8,.3,1) infinite; transform-origin: 50% 100%; }
 .mochi-card .character-card__portrait img { animation: mochi-idle 5.6s ease-in-out infinite; transform-origin: 50% 100%; }
+.mochi-card img[src$="mochi-1.png"],
+.story-companions img[src$="mochi-1.png"] { clip-path: inset(0 6% 0 0); }
+.mochi-card img[src$="mochi-2.png"],
+.story-companions img[src$="mochi-2.png"] { clip-path: inset(0 11% 0 0); }
 .character-card:active .character-card__portrait img { transform: scale(.97); }
 .character-card__body { display: flex; flex-direction: column; padding: 26px 30px 32px; }
 .character-card__name { font-size: 3rem; font-weight: 1000; line-height: 1; }
