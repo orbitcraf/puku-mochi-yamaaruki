@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#28bdf2">
+  <meta name="description" content="元気なぷくとのんびり屋のもちと一緒に、絵本の山を歩いて遊ぶサイトです。">
+  <title>ぷくともちの やまあるき</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect rx='15' width='64' height='64' fill='%2328bdf2'/%3E%3Cpath d='M5 52 25 20l11 18 8-12 15 26Z' fill='%237fd34e' stroke='%231c285c' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='49' cy='14' r='7' fill='%23ffe05d'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#adventure">ぼうけんへ進む</a>
+  <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="山の音をオンにする">
+    <span aria-hidden="true">♫</span><b>おと OFF</b>
+  </button>
+
+  <header class="hero" id="top">
+    <img class="hero__image" src="assets/hero.jpg" alt="青空と山々のなか、紫色のぷくと白いもちが山道を歩いている">
+    <div class="hero__wash" aria-hidden="true"></div>
+    <div class="floating-cloud cloud-one" aria-hidden="true">☁</div>
+    <div class="floating-cloud cloud-two" aria-hidden="true">☁</div>
+    <div class="flying-birds" aria-hidden="true">⌁　⌁</div>
+    <div class="hero__content">
+      <p class="hero__eyebrow"><span>ぷく</span><i>と</i><span>もち</span><i>の</i></p>
+      <h1>やまあるき</h1>
+      <p class="hero__copy">あっちに なにか あるよ！<br><small>ゆっくり いこうよ〜</small></p>
+      <a class="trail-button" href="#adventure">ぼうけんを はじめる <span aria-hidden="true">➜</span></a>
+    </div>
+    <div class="hero__trail" aria-hidden="true"></div>
+    <div class="scroll-cue" aria-hidden="true"><span>ゆっくり<br>スクロール</span><b>↓</b></div>
+  </header>
+
+  <main>
+    <section class="intro section-pad" id="adventure">
+      <div class="section-heading reveal">
+        <p class="kicker">ふたりの こと</p>
+        <h2>いっしょだと、<br><em>たのしいね。</em></h2>
+        <p>気になるカードを押してみてね。ふたりの表情やポーズが変わるよ。</p>
+      </div>
+
+      <div class="character-spread">
+        <button class="character-card puku-card reveal" type="button" data-character="puku" aria-label="ぷくのポーズを変える">
+          <span class="character-card__tag">せんとう！</span>
+          <span class="character-card__number">01</span>
+          <span class="character-card__portrait">
+            <img src="assets/puku-1.png" alt="元気に手を振るぷく" data-character-image>
+            <span class="click-speech" data-character-speech aria-live="polite">いくぞー！</span>
+          </span>
+          <span class="character-card__body">
+            <span class="character-card__name">ぷく <small>PUKU</small></span>
+            <span class="character-card__traits">げんき　・　くいしんぼう　・　はっけん名人</span>
+            <span class="character-card__quote" data-character-quote>「いくぞー！」</span>
+            <span class="tap-hint">さわると へんしん！ ↻</span>
+          </span>
+        </button>
+
+        <button class="character-card mochi-card reveal" type="button" data-character="mochi" aria-label="もちのポーズを変える">
+          <span class="character-card__tag">ちょっと きゅうけい</span>
+          <span class="character-card__number">02</span>
+          <span class="character-card__portrait">
+            <img src="assets/mochi-1.png" alt="のんびり立っているもち" data-character-image>
+            <span class="sleep-bubble" aria-hidden="true">Z z</span>
+            <span class="click-speech" data-character-speech aria-live="polite">ゆっくりね</span>
+          </span>
+          <span class="character-card__body">
+            <span class="character-card__name">もち <small>MOCHI</small></span>
+            <span class="character-card__traits">のんびり　・　休憩ずき　・　けしきずき</span>
+            <span class="character-card__quote" data-character-quote>「ゆっくりね」</span>
+            <span class="tap-hint">さわると へんしん！ ↻</span>
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <section class="story" aria-labelledby="story-title" data-active-scene="">
+      <div class="story__sky section-pad">
+        <div class="section-heading story-heading reveal">
+          <p class="kicker">きょうの みち</p>
+          <h2 id="story-title">てっぺんまで<br><em>あと どのくらい？</em></h2>
+        </div>
+      </div>
+
+      <div class="story-path" aria-hidden="true"><span></span></div>
+      <div class="story-ambience" aria-hidden="true">
+        <span class="story-cloud cloud-a">☁</span><span class="story-cloud cloud-b">☁</span>
+        <span class="story-birds">⌁　⌁</span><span class="story-grass">〽 〽 〽</span>
+      </div>
+      <div class="story-companions" aria-hidden="true">
+        <img class="trail-puku" src="assets/puku-2.png" alt="">
+        <img class="trail-mochi" src="assets/mochi-1.png" alt="">
+        <span class="trail-speech">いくぞー！</span>
+      </div>
+      <p class="sr-only" id="scene-reaction" aria-live="polite"></p>
+
+      <div class="story-scenes section-pad">
+        <article class="story-scene reveal" data-scene="departure">
+          <div class="scene-image"><img src="assets/story-1.jpg" alt="木の道しるべから元気に出発するぷくともち" loading="lazy"><button class="scene-touch" type="button" data-effect="grass" aria-label="草を揺らす">✦</button></div>
+          <div class="scene-copy"><b>01</b><p class="scene-label">しゅっぱつ</p><h3>「こっち こっち！」</h3><p>ぷくは地図をしまうより先に、もう歩きはじめました。</p></div>
+        </article>
+        <article class="story-scene story-scene--right reveal" data-scene="forest">
+          <div class="scene-image"><img src="assets/story-2.jpg" alt="木漏れ日の森を歩くふたり" loading="lazy"><button class="scene-touch" type="button" data-effect="bird" aria-label="鳥を呼ぶ">♪</button></div>
+          <div class="scene-copy"><b>02</b><p class="scene-label">もり</p><h3>カサッ！ なにかいた！</h3><p>ぷくは音を追いかけ、もちは木漏れ日を見上げます。</p></div>
+        </article>
+        <article class="story-scene reveal" data-scene="river">
+          <div class="scene-image"><img src="assets/story-3.jpg" alt="きらきらした川を渡るふたり" loading="lazy"><span class="river-shimmer" aria-hidden="true"></span><button class="scene-touch" type="button" data-effect="river" aria-label="川に触れる">○</button></div>
+          <div class="scene-copy"><b>03</b><p class="scene-label">かわ</p><h3>いしから いしへ！</h3><p>ぴょんぴょん進むぷく。もちは一歩ずつ、ちゃぷり。</p></div>
+        </article>
+        <article class="story-scene story-scene--right reveal" data-scene="slope">
+          <div class="scene-image"><img src="assets/story-4.jpg" alt="急な岩場を登るぷくともち" loading="lazy"><button class="scene-touch" type="button" data-effect="pebble" aria-label="小石を転がす">●</button></div>
+          <div class="scene-copy"><b>04</b><p class="scene-label">きゅうな さか</p><h3>よいしょ、よいしょ</h3><p>ぷくはどんどん上へ。もちの「まって〜」が山に響きます。</p></div>
+        </article>
+        <article class="story-scene reveal" data-scene="rest">
+          <div class="scene-image"><img src="assets/story-5.jpg" alt="岩の上で休憩するもちと待っているぷく" loading="lazy"><button class="scene-touch" type="button" data-effect="wind" aria-label="風を起こす">〜</button></div>
+          <div class="scene-copy"><b>05</b><p class="scene-label">きゅうけい</p><h3>ここ、すわりごこち まる！</h3><p>もちが座ると、ぷくもとなりで雲を数えました。</p></div>
+        </article>
+        <article class="story-scene story-scene--right reveal" data-scene="summit">
+          <div class="scene-image"><img src="assets/story-7.jpg" alt="山頂でよろこぶぷくともち" loading="lazy"><button class="scene-touch" type="button" data-effect="cheer" aria-label="山びこを起こす">!</button></div>
+          <div class="scene-copy"><b>06</b><p class="scene-label">ちょうじょう</p><h3>やったー！</h3><p>速さはちがっても、着いたのはふたりいっしょです。</p></div>
+        </article>
+        <article class="story-scene reveal" data-scene="sunset">
+          <div class="scene-image"><img src="assets/story-8.jpg" alt="夕焼けを並んで見るふたり" loading="lazy"><button class="scene-touch" type="button" data-effect="sunset" aria-label="夕空をきらめかせる">♥</button></div>
+          <div class="scene-copy"><b>07</b><p class="scene-label">ゆうやけ</p><h3>あしたも きれいかな</h3><p>帰る前に、空が紫になるまで並んで眺めました。</p></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="game-section section-pad" id="game" aria-labelledby="game-title">
+      <div class="game-intro reveal">
+        <p class="kicker">あそんでみよう</p>
+        <h2 id="game-title">ふたりで 山頂へ<br><em>いっしょに いこう！</em></h2>
+        <p>ぷくが先へ行きすぎると、もちが「まって〜」。歩幅を合わせて山頂をめざそう。</p>
+      </div>
+      <div class="game-shell reveal">
+        <div class="game-hud" aria-live="polite">
+          <span>🍙 <b id="rice-count">0</b> / 5</span>
+          <span class="together-meter" id="together-meter" aria-label="ふたりの距離"><i></i><b>いっしょ</b></span>
+          <span id="game-message">「はじめる」を押してね</span>
+          <button id="game-reset" type="button">もういちど</button>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="mountain-game" width="960" height="420" tabindex="0" aria-label="ぷくが先に行きすぎないよう、もちと一緒に山頂へ進むゲーム"></canvas>
+          <button class="game-start" id="game-start" type="button">いっしょに しゅっぱつ！</button>
+        </div>
+        <div class="game-controls" aria-label="ゲーム操作">
+          <div class="move-controls">
+            <button type="button" data-control="left" aria-label="左へ進む">◀</button>
+            <button type="button" data-control="right" aria-label="右へ進む">▶</button>
+          </div>
+          <button class="jump-control" type="button" data-control="jump">ジャンプ！</button>
+        </div>
+        <p class="keyboard-help">キーボード：← → または A D ／ ジャンプ：Space・↑・W</p>
+      </div>
+    </section>
+
+    <section class="fortune section-pad" aria-labelledby="fortune-title">
+      <div class="fortune__sun" aria-hidden="true">☀</div>
+      <p class="kicker">きょうの やまあるき</p>
+      <h2 id="fortune-title">きょうは どんな日？</h2>
+      <div class="fortune__message" id="mountain-message" aria-live="polite">ボタンを おしてみてね</div>
+      <button class="fortune__button" id="message-button" type="button">きいてみる <span aria-hidden="true">♪</span></button>
+    </section>
+
+    <section class="album section-pad" aria-labelledby="album-title">
+      <div class="section-heading album-heading reveal">
+        <p class="kicker">おもいで アルバム</p>
+        <h2 id="album-title">たのしかったね。</h2>
+        <p>写真を押すと、大きく見られるよ。</p>
+      </div>
+      <div class="album-grid">
+        <button class="album-card tilt-left reveal" type="button" data-album-index="0"><img src="assets/story-2.jpg" alt="森を歩いた思い出" loading="lazy"><span>森の におい</span></button>
+        <button class="album-card tall reveal" type="button" data-album-index="1"><img src="assets/story-3.jpg" alt="川を渡った思い出" loading="lazy"><span>川は きらきら</span></button>
+        <button class="album-card tilt-right reveal" type="button" data-album-index="2"><img src="assets/story-5.jpg" alt="山で休憩した思い出" loading="lazy"><span>ひとやすみ</span></button>
+        <button class="album-card wide reveal" type="button" data-album-index="3"><img src="assets/story-6.jpg" alt="おにぎりを食べた思い出" loading="lazy"><span>いちばんの ごちそう</span></button>
+        <button class="album-card tilt-left reveal" type="button" data-album-index="4"><img src="assets/story-7.jpg" alt="山頂に着いた思い出" loading="lazy"><span>てっぺん！</span></button>
+        <button class="album-card wide tilt-right reveal" type="button" data-album-index="5"><img src="assets/story-8.jpg" alt="夕焼けを眺めた思い出" loading="lazy"><span>ふたりの ゆうやけ</span></button>
+      </div>
+    </section>
+
+    <section class="ending" aria-label="エンディング">
+      <img src="assets/ending.jpg" alt="夕焼けの山頂で、ぷくともちが並んで座っている" loading="lazy">
+      <div class="ending__shade" aria-hidden="true"></div>
+      <div class="ending__copy reveal">
+        <p>きょうも いっぱい あるいたね。</p>
+        <h2><span>また いっしょに</span><span>いこう。</span></h2>
+        <a href="#top">もういちど 山のふもとへ ↑</a>
+      </div>
+    </section>
+  </main>
+
+  <footer><p>ぷくともちの やまあるき</p><span>きょうも いい山でした。</span></footer>
+
+  <dialog class="album-dialog" id="album-dialog">
+    <button class="dialog-close" type="button" aria-label="閉じる">×</button>
+    <img id="dialog-image" src="assets/story-2.jpg" alt="">
+    <div><span id="dialog-count"></span><h2 id="dialog-title"></h2><p id="dialog-description"></p></div>
+  </dialog>
+
+  <script src="sound.js"></script>
+  <script src="app.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
