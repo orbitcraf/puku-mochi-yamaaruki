@@ -47,7 +47,7 @@ const localReferences = [...references].filter(
 );
 const rootAbsoluteReferences = localReferences.filter((reference) => reference.startsWith("/"));
 const missingReferences = localReferences.filter(
-  (reference) => !fs.existsSync(path.resolve(root, reference)),
+  (reference) => !fs.existsSync(path.resolve(root, reference.split(/[?#]/, 1)[0])),
 );
 
 if (rootAbsoluteReferences.length || missingReferences.length) {
