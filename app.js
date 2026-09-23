@@ -16,25 +16,26 @@ const CHARACTER_STATES = {
 };
 
 const SCENES = {
-  departure: { puku: "assets/puku-2.png", mochi: "assets/mochi-1.png", line: "いくぞー！", reaction: "草が さわさわ。" },
-  forest: { puku: "assets/puku-3.png", mochi: "assets/mochi-4.png", line: "みつけた！", reaction: "ことりが ぴゅーん！" },
-  river: { puku: "assets/puku-2.png", mochi: "assets/mochi-1.png", line: "ぴょーん！", reaction: "川が きらり。" },
-  slope: { puku: "assets/puku-2.png", mochi: "assets/mochi-1.png", line: "あと すこし！", reaction: "ころころ ころん。" },
-  rest: { puku: "assets/puku-1.png", mochi: "assets/mochi-3.png", line: "まってるよ", reaction: "いい かぜ〜。" },
-  summit: { puku: "assets/puku-2.png", mochi: "assets/mochi-1.png", line: "やったー！", reaction: "やっほー！" },
-  sunset: { puku: "assets/puku-1.png", mochi: "assets/mochi-4.png", line: "また こよう", reaction: "空が きらり。" }
+  departure: { reaction: "草が さわさわ。" },
+  forest: { reaction: "ことりが ぴゅーん！" },
+  river: { reaction: "川が きらり。" },
+  slope: { reaction: "小石が ころころ ころん。" },
+  rest: { reaction: "いい かぜ〜。" },
+  snack: { reaction: "おにぎりが きらり。" },
+  summit: { reaction: "やっほー！" },
+  sunset: { reaction: "夕空が きらり。" }
 };
 
-const MOUNTAIN_MESSAGES = [
-  "今日は ゆっくり いこう",
-  "おにぎりを わすれずに！",
-  "いい石を見つけたら ちょっと休憩",
-  "山頂まで あとすこし",
-  "小さな音にも 耳をすませてみよう",
-  "だれかと歩けば いつもの道も冒険",
-  "あせらなくても 山はにげないよ",
-  "今日は ぷくの歩幅、明日は もちの歩幅"
-];
+const EFFECTS = {
+  grass: ["〽", "❋", "〽"],
+  bird: ["⌁", "♪", "⌁"],
+  river: ["○", "◌", "✦"],
+  pebble: ["●", "•", "·"],
+  wind: ["〜", "﹏", "〜"],
+  snack: ["🍙", "✦", "♡"],
+  cheer: ["!", "★", "!"],
+  sunset: ["♥", "✦", "·"]
+};
 
 const ALBUM_ITEMS = [
   { image: "assets/story-2.jpg", alt: "森を歩くぷくともち", title: "森の におい", description: "葉っぱのすきまから、まるい光がたくさん落ちてきました。" },
@@ -45,13 +46,181 @@ const ALBUM_ITEMS = [
   { image: "assets/story-8.jpg", alt: "夕焼けを見るぷくともち", title: "ふたりの ゆうやけ", description: "しずかな空を、ことばにしないで眺めました。" }
 ];
 
+const pages = [...document.querySelectorAll(".book-page")];
+const pageIndexById = new Map(pages.map((page, index) => [page.dataset.pageId, index]));
+const viewport = document.getElementById("book-viewport");
+const previousButton = document.getElementById("page-prev");
+const nextButton = document.getElementById("page-next");
+const pageStatus = document.getElementById("page-status");
+const pageDots = document.getElementById("page-dots");
+const pageAnnouncement = document.getElementById("page-announcement");
+const reactionOutput = document.getElementById("scene-reaction");
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+let currentPageIndex = 0;
+let transitionTimer = 0;
+let isTransitioning = false;
+let queuedHistoryIndex = null;
+
+function pageIdFromHash() {
+  const value = decodeURIComponent(window.location.hash.replace(/^#page-/, ""));
+  return pageIndexById.has(value) ? value : null;
+}
+
+function pageTitle(page) {
+  return page.querySelector("[data-page-title]")?.textContent.trim().replace(/\s+/g, " ") || "ページ";
+}
+
+function setPageAccessibility(activeIndex) {
+  pages.forEach((page, index) => {
+    const active = index === activeIndex;
+    page.setAttribute("aria-hidden", String(!active));
+    page.inert = !active;
+  });
+}
+
+function updateNavigation() {
+  const total = pages.length;
+  previousButton.disabled = currentPageIndex === 0;
+  nextButton.disabled = currentPageIndex === total - 1;
+  pageStatus.textContent = `${currentPageIndex + 1} / ${total}`;
+  previousButton.setAttribute("aria-label", currentPageIndex > 0 ? `前のページ、${pageTitle(pages[currentPageIndex - 1])}へ` : "前のページはありません");
+  nextButton.setAttribute("aria-label", currentPageIndex < total - 1 ? `次のページ、${pageTitle(pages[currentPageIndex + 1])}へ` : "次のページはありません");
+  [...pageDots.children].forEach((dot, index) => dot.classList.toggle("is-current", index === currentPageIndex));
+}
+
+function updateSceneSound() {
+  const scene = pages[currentPageIndex].dataset.scene || "departure";
+  window.bookSound?.setScene(scene);
+}
+
+function preloadNearbyImages(index) {
+  [index - 1, index, index + 1].forEach((nearbyIndex) => {
+    const page = pages[nearbyIndex];
+    if (!page) return;
+    page.querySelectorAll("img").forEach((image) => {
+      image.loading = "eager";
+      if (!image.complete) {
+        const preload = new Image();
+        preload.src = image.currentSrc || image.src;
+      }
+    });
+  });
+}
+
+function updateUrl(index, replace = false) {
+  const url = `#page-${pages[index].dataset.pageId}`;
+  const method = replace ? "replaceState" : "pushState";
+  window.history[method]({ page: pages[index].dataset.pageId }, "", url);
+}
+
+function finishTransition(oldPage, newPage, focusTitle) {
+  oldPage?.classList.remove("is-leaving", "is-leaving-next", "is-leaving-prev");
+  newPage.classList.remove("is-entering", "is-entering-next", "is-entering-prev");
+  isTransitioning = false;
+  if (focusTitle) newPage.querySelector("[data-page-title]")?.focus({ preventScroll: true });
+  if (queuedHistoryIndex !== null && queuedHistoryIndex !== currentPageIndex) {
+    const queuedIndex = queuedHistoryIndex;
+    queuedHistoryIndex = null;
+    goToPage(queuedIndex, { history: "none", focus: false });
+  } else {
+    queuedHistoryIndex = null;
+  }
+}
+
+function goToPage(index, options = {}) {
+  if (!Number.isInteger(index) || index < 0 || index >= pages.length || index === currentPageIndex) return;
+  if (isTransitioning) {
+    if (options.fromHistory) queuedHistoryIndex = index;
+    return;
+  }
+
+  const oldIndex = currentPageIndex;
+  const oldPage = pages[oldIndex];
+  const newPage = pages[index];
+  const direction = index > oldIndex ? "next" : "prev";
+  isTransitioning = true;
+
+  oldPage.classList.remove("is-active");
+  oldPage.classList.add("is-leaving", `is-leaving-${direction}`);
+  newPage.classList.add("is-active", "is-entering", `is-entering-${direction}`);
+  currentPageIndex = index;
+  setPageAccessibility(index);
+  updateNavigation();
+  preloadNearbyImages(index);
+  updateSceneSound();
+
+  if (options.history !== "none") updateUrl(index, options.history === "replace");
+  pageAnnouncement.textContent = `${index + 1}ページ、${pageTitle(newPage)}`;
+
+  window.clearTimeout(transitionTimer);
+  transitionTimer = window.setTimeout(
+    () => finishTransition(oldPage, newPage, options.focus !== false),
+    reducedMotion.matches ? 20 : 380
+  );
+}
+
+function syncPageFromUrl() {
+  const id = pageIdFromHash();
+  if (id === null) {
+    if (currentPageIndex === 0) updateUrl(0, true);
+    else goToPage(0, { history: "replace", focus: false, fromHistory: true });
+    return;
+  }
+  const index = pageIndexById.get(id);
+  if (index !== currentPageIndex) goToPage(index, { history: "none", focus: false, fromHistory: true });
+}
+
+function initializeBook() {
+  document.querySelectorAll(".book-page img").forEach((image) => { image.draggable = false; });
+  pageDots.replaceChildren(...pages.map(() => document.createElement("i")));
+  const requestedId = pageIdFromHash();
+  const initialIndex = requestedId === null ? 0 : pageIndexById.get(requestedId);
+  pages.forEach((page, index) => page.classList.toggle("is-active", index === initialIndex));
+  currentPageIndex = initialIndex;
+  setPageAccessibility(initialIndex);
+  updateNavigation();
+  preloadNearbyImages(initialIndex);
+  updateSceneSound();
+  if (window.location.hash !== `#page-${pages[initialIndex].dataset.pageId}`) updateUrl(initialIndex, true);
+}
+
+previousButton.addEventListener("click", () => goToPage(currentPageIndex - 1));
+nextButton.addEventListener("click", () => goToPage(currentPageIndex + 1));
+document.querySelectorAll("[data-go-next]").forEach((button) => button.addEventListener("click", () => goToPage(currentPageIndex + 1)));
+document.querySelectorAll("[data-go-page]").forEach((button) => button.addEventListener("click", () => goToPage(pageIndexById.get(button.dataset.goPage))));
+window.addEventListener("popstate", syncPageFromUrl);
+window.addEventListener("hashchange", syncPageFromUrl);
+
+document.addEventListener("keydown", (event) => {
+  if (document.getElementById("album-dialog")?.open || event.altKey || event.ctrlKey || event.metaKey) return;
+  if (event.key === "ArrowRight") { event.preventDefault(); goToPage(currentPageIndex + 1); }
+  if (event.key === "ArrowLeft") { event.preventDefault(); goToPage(currentPageIndex - 1); }
+  if (event.key === "Home") { event.preventDefault(); goToPage(0); }
+  if (event.key === "End") { event.preventDefault(); goToPage(pages.length - 1); }
+});
+
+let swipeStart = null;
+viewport.addEventListener("pointerdown", (event) => {
+  if (!event.isPrimary || event.button !== 0 || event.target.closest("button, a, dialog, [data-no-swipe]")) return;
+  swipeStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
+});
+viewport.addEventListener("pointercancel", () => { swipeStart = null; });
+viewport.addEventListener("pointerup", (event) => {
+  if (!swipeStart || swipeStart.id !== event.pointerId) return;
+  const deltaX = event.clientX - swipeStart.x;
+  const deltaY = event.clientY - swipeStart.y;
+  swipeStart = null;
+  if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.2) return;
+  goToPage(currentPageIndex + (deltaX < 0 ? 1 : -1));
+});
+
 document.querySelectorAll("[data-character]").forEach((card) => {
   const name = card.dataset.character;
   const states = CHARACTER_STATES[name];
-  let stateIndex = 0;
   const image = card.querySelector("[data-character-image]");
   const quote = card.querySelector("[data-character-quote]");
   const speech = card.querySelector("[data-character-speech]");
+  let stateIndex = 0;
   let changeTimer;
 
   card.addEventListener("click", () => {
@@ -76,67 +245,10 @@ document.querySelectorAll("[data-character]").forEach((card) => {
   });
 });
 
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) entry.target.classList.add("is-visible");
-  });
-}, { threshold: 0.16, rootMargin: "0px 0px -6%" });
-document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
-
-const story = document.querySelector(".story");
-const companions = document.querySelector(".story-companions");
-const trailPuku = companions?.querySelector(".trail-puku");
-const trailMochi = companions?.querySelector(".trail-mochi");
-const trailSpeech = companions?.querySelector(".trail-speech");
-let sceneSpeechTimer;
-let ticking = false;
-function updateStoryProgress() {
-  if (!story) return;
-  const rect = story.getBoundingClientRect();
-  const scrollable = Math.max(1, rect.height - window.innerHeight);
-  const progress = Math.min(1, Math.max(0, -rect.top / scrollable));
-  story.style.setProperty("--scroll-progress", progress.toFixed(3));
-  ticking = false;
-}
-window.addEventListener("scroll", () => {
-  if (!ticking) {
-    window.requestAnimationFrame(updateStoryProgress);
-    ticking = true;
-  }
-}, { passive: true });
-updateStoryProgress();
-
-function activateScene(sceneName) {
-  const scene = SCENES[sceneName];
-  if (!scene || story?.dataset.activeScene === sceneName) return;
-  story.dataset.activeScene = sceneName;
-  trailPuku.src = scene.puku;
-  trailMochi.src = scene.mochi;
-  trailSpeech.textContent = scene.line;
-  companions.classList.toggle("is-resting", sceneName === "rest" || sceneName === "sunset");
-  companions.classList.remove("is-speaking");
-  void companions.offsetWidth;
-  companions.classList.add("is-speaking");
-  window.clearTimeout(sceneSpeechTimer);
-  sceneSpeechTimer = window.setTimeout(() => companions.classList.remove("is-speaking"), 1800);
-  window.bookSound?.setScene(sceneName);
-}
-
-const sceneObserver = new IntersectionObserver((entries) => {
-  const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-  if (visible[0]) activateScene(visible[0].target.dataset.scene);
-}, { threshold: [0.25, 0.5, 0.7], rootMargin: "-28% 0px -38%" });
-document.querySelectorAll("[data-scene]").forEach((scene) => sceneObserver.observe(scene));
-
-const EFFECTS = {
-  grass: ["〽", "❋", "〽"], bird: ["⌁", "♪", "⌁"], river: ["○", "◌", "✦"],
-  pebble: ["●", "•", "·"], wind: ["〜", "﹏", "〜"], cheer: ["!", "★", "!"], sunset: ["♥", "✦", "·"]
-};
-const reactionOutput = document.getElementById("scene-reaction");
 document.querySelectorAll(".scene-touch").forEach((button) => {
   button.addEventListener("click", () => {
     const effect = button.dataset.effect;
-    const sceneImage = button.closest(".scene-image");
+    const imageArea = button.closest(".illustration-leaf");
     const symbols = EFFECTS[effect];
     for (let index = 0; index < 7; index += 1) {
       const particle = document.createElement("span");
@@ -147,8 +259,8 @@ document.querySelectorAll(".scene-touch").forEach((button) => {
       particle.style.setProperty("--size", `${1 + Math.random() * 1.2}rem`);
       particle.style.setProperty("--drift", `${-45 + Math.random() * 90}px`);
       particle.style.setProperty("--spin", `${-25 + Math.random() * 50}deg`);
-      sceneImage.appendChild(particle);
-      window.setTimeout(() => particle.remove(), 1500);
+      imageArea.appendChild(particle);
+      window.setTimeout(() => particle.remove(), 1450);
     }
     const sceneName = button.closest("[data-scene]").dataset.scene;
     reactionOutput.textContent = SCENES[sceneName].reaction;
@@ -158,45 +270,38 @@ document.querySelectorAll(".scene-touch").forEach((button) => {
   });
 });
 
-const messageButton = document.getElementById("message-button");
-const messageOutput = document.getElementById("mountain-message");
-let previousMessage = -1;
-messageButton.addEventListener("click", () => {
-  let next;
-  do next = Math.floor(Math.random() * MOUNTAIN_MESSAGES.length);
-  while (next === previousMessage && MOUNTAIN_MESSAGES.length > 1);
-  previousMessage = next;
-  messageOutput.classList.remove("pop");
-  void messageOutput.offsetWidth;
-  messageOutput.textContent = `「${MOUNTAIN_MESSAGES[next]}」`;
-  messageOutput.classList.add("pop");
-});
-
 const dialog = document.getElementById("album-dialog");
+const albumOpen = document.getElementById("album-open");
 const dialogImage = document.getElementById("dialog-image");
 const dialogTitle = document.getElementById("dialog-title");
 const dialogDescription = document.getElementById("dialog-description");
 const dialogCount = document.getElementById("dialog-count");
-let albumTrigger = null;
+const albumButtons = [...document.querySelectorAll("[data-album-index]")];
 
-document.querySelectorAll("[data-album-index]").forEach((button) => {
-  button.addEventListener("click", () => {
-    albumTrigger = button;
-    const index = Number(button.dataset.albumIndex);
-    const item = ALBUM_ITEMS[index];
-    dialogImage.src = item.image;
-    dialogImage.alt = item.alt;
-    dialogTitle.textContent = item.title;
-    dialogDescription.textContent = item.description;
-    dialogCount.textContent = `${index + 1} / ${ALBUM_ITEMS.length}`;
-    dialog.showModal();
+function selectAlbumItem(index) {
+  const item = ALBUM_ITEMS[index];
+  dialogImage.src = item.image;
+  dialogImage.alt = item.alt;
+  dialogTitle.textContent = item.title;
+  dialogDescription.textContent = item.description;
+  dialogCount.textContent = `${index + 1} / ${ALBUM_ITEMS.length}`;
+  albumButtons.forEach((button, buttonIndex) => {
+    if (buttonIndex === index) button.setAttribute("aria-current", "true");
+    else button.removeAttribute("aria-current");
   });
-});
+}
 
+albumOpen.addEventListener("click", () => {
+  selectAlbumItem(0);
+  dialog.showModal();
+});
+albumButtons.forEach((button) => button.addEventListener("click", () => selectAlbumItem(Number(button.dataset.albumIndex))));
 dialog.querySelector(".dialog-close").addEventListener("click", () => dialog.close());
 dialog.addEventListener("click", (event) => {
   const rect = dialog.getBoundingClientRect();
   const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
   if (outside) dialog.close();
 });
-dialog.addEventListener("close", () => albumTrigger?.focus());
+dialog.addEventListener("close", () => albumOpen.focus());
+
+initializeBook();
