@@ -290,6 +290,95 @@ img { display: block; max-width: 100%; -webkit-user-drag: none; user-select: non
   .album-thumbnails button { padding: 4px 4px 6px; border-width: 2px; font-size: .75rem; }
 }
 
+/* Phone-only sizing: keep the picture-book layout compact without shrinking tap targets. */
+@media (max-width: 480px) {
+  .book-controls {
+    min-height: 58px;
+    gap: 8px;
+    padding: 4px max(8px, env(safe-area-inset-left)) max(4px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-right));
+  }
+  .page-button {
+    min-width: 76px;
+    min-height: 44px;
+    padding: 3px 9px;
+    border-radius: 13px;
+    box-shadow: 0 3px var(--navy);
+    font-size: .82rem;
+  }
+  .page-progress { min-width: 62px; gap: 2px; }
+  #page-status { padding: 0 7px; font-size: .76rem; }
+
+  .book-spread { grid-template-rows: minmax(0, 54%) minmax(0, 46%); }
+  .story-leaf { padding: 13px 17px 11px; }
+  .chapter-number { top: 7px; right: 10px; font-size: 3rem; }
+  .scene-label { margin-bottom: 4px; padding: 1px 8px; font-size: .68rem; }
+  .story-leaf h2 { margin-bottom: 5px; font-size: clamp(1.4rem, 5.8vw, 2.05rem); }
+  .story-leaf > p:not(.scene-label) { font-size: clamp(.78rem, 3.1vw, .9rem); line-height: 1.48; }
+  .character-note { margin-top: 6px !important; padding: 4px 8px; border-left-width: 3px; font-size: .74rem !important; }
+  .sound-word { margin-top: 7px !important; font-size: 1.02rem !important; }
+  .page-doodle { right: 9%; bottom: 7%; font-size: 1.3rem; }
+  .scene-touch { right: 9px; bottom: 9px; width: 44px; height: 44px; font-size: 1rem; }
+
+  .cover-copy { left: 16px; right: 16px; top: 11%; }
+  .cover-eyebrow { margin-bottom: -5px; font-size: 1.2rem; }
+  .cover-copy h1 { font-size: clamp(3rem, 14vw, 4.35rem); }
+  .cover-copy > p:last-of-type { margin: 14px 0 12px 2px; font-size: .85rem; }
+  .wood-button {
+    min-height: 44px;
+    gap: 9px;
+    padding: 5px 11px 5px 13px;
+    border-radius: 10px 14px 9px 12px;
+    box-shadow: 0 5px 0 var(--navy);
+    font-size: .86rem;
+  }
+  .wood-button span { width: 26px; height: 26px; }
+  .swipe-hint { right: 10px; bottom: 8px; font-size: .7rem; }
+
+  .character-leaf { grid-template-rows: minmax(0, 62%) minmax(0, 38%); }
+  .character-portrait img {
+    width: 86%;
+    height: 86%;
+    margin: auto;
+    object-fit: contain;
+    object-position: center bottom;
+  }
+  .character-copy { gap: 3px; padding: 8px 8px 9px; }
+  .character-copy strong { font-size: clamp(1.45rem, 6vw, 1.8rem); }
+  .character-copy strong small { margin-top: 2px; }
+  .character-copy > span { font-size: clamp(.64rem, 2.65vw, .76rem); line-height: 1.38; }
+  .character-copy em { padding: 2px 5px; border-radius: 9px; font-size: .7rem; }
+  .tap-hint { font-size: .6rem; }
+  .character-tag { top: 8px; left: 7px; padding: 2px 6px; font-size: .64rem; }
+  .click-speech { min-width: 62px; padding: 3px 6px; font-size: .66rem; }
+
+  .ending-copy { left: 16px; right: 16px; bottom: 5%; }
+  .ending-copy > p { font-size: .78rem; }
+  .ending-copy h2 { margin: 5px 0 15px; font-size: clamp(2.15rem, 10vw, 3.35rem); }
+  .ending-actions { gap: 8px; }
+  .paper-button { min-height: 44px; padding: 5px 11px; border-width: 3px; border-radius: 13px; font-size: .78rem; }
+
+  .sound-toggle {
+    gap: 5px;
+    min-height: 44px;
+    padding: 3px 7px 3px 4px;
+    border-width: 2px;
+    box-shadow: 0 3px 0 rgba(28,40,92,.24);
+  }
+  .sound-toggle span { width: 26px; height: 26px; }
+  .sound-toggle b { font-size: .62rem; }
+
+  .album-dialog { padding: 8px; border-radius: 17px; }
+  .album-dialog__header { margin-bottom: 9px; gap: 10px; }
+  .album-dialog__header h2 { font-size: 1.35rem; }
+  .dialog-close { width: 44px; height: 44px; font-size: 1.4rem; }
+  .album-dialog__layout { gap: 10px; }
+  .album-preview > div { padding: 8px 10px 10px; }
+  .album-preview h3 { font-size: 1.15rem; }
+  .album-preview p { font-size: .78rem; }
+  .album-thumbnails { gap: 5px; }
+  .album-thumbnails button { padding: 3px 3px 5px; font-size: .68rem; }
+}
+
 @media (max-height: 650px) and (max-width: 820px) {
   .book-controls { min-height: 58px; }
   .page-button { min-height: 44px; }
