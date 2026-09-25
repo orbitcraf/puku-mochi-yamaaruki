@@ -15,28 +15,6 @@ const CHARACTER_STATES = {
   ]
 };
 
-const SCENES = {
-  departure: { reaction: "草が さわさわ。" },
-  forest: { reaction: "ことりが ぴゅーん！" },
-  river: { reaction: "川が きらり。" },
-  slope: { reaction: "小石が ころころ ころん。" },
-  rest: { reaction: "いい かぜ〜。" },
-  snack: { reaction: "おにぎりが きらり。" },
-  summit: { reaction: "やっほー！" },
-  sunset: { reaction: "夕空が きらり。" }
-};
-
-const EFFECTS = {
-  grass: ["〽", "❋", "〽"],
-  bird: ["⌁", "♪", "⌁"],
-  river: ["○", "◌", "✦"],
-  pebble: ["●", "•", "·"],
-  wind: ["〜", "﹏", "〜"],
-  snack: ["🍙", "✦", "♡"],
-  cheer: ["!", "★", "!"],
-  sunset: ["♥", "✦", "·"]
-};
-
 const ALBUM_ITEMS = [
   { image: "assets/story-2.jpg", alt: "森を歩くぷくともち", title: "森の におい", description: "葉っぱのすきまから、まるい光がたくさん落ちてきました。" },
   { image: "assets/story-3.jpg", alt: "川を渡るぷくともち", title: "川は きらきら", description: "ぷくは三歩で、もちは七歩で。冷たい水を渡りました。" },
@@ -54,7 +32,6 @@ const nextButton = document.getElementById("page-next");
 const pageStatus = document.getElementById("page-status");
 const pageDots = document.getElementById("page-dots");
 const pageAnnouncement = document.getElementById("page-announcement");
-const reactionOutput = document.getElementById("scene-reaction");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 let currentPageIndex = 0;
 let transitionTimer = 0;
@@ -83,14 +60,10 @@ function updateNavigation() {
   previousButton.disabled = currentPageIndex === 0;
   nextButton.disabled = currentPageIndex === total - 1;
   pageStatus.textContent = `${currentPageIndex + 1} / ${total}`;
-  previousButton.setAttribute("aria-label", currentPageIndex > 0 ? `前のページ、${pageTitle(pages[currentPageIndex - 1])}へ` : "前のページはありません");
-  nextButton.setAttribute("aria-label", currentPageIndex < total - 1 ? `次のページ、${pageTitle(pages[currentPageIndex + 1])}へ` : "次のページはありません");
+  pageStatus.setAttribute("aria-label", `${currentPageIndex + 1}ページめ、ぜんぶで ${total}ページ`);
+  previousButton.setAttribute("aria-label", currentPageIndex > 0 ? `まえのページ、${pageTitle(pages[currentPageIndex - 1])}へ` : "まえのページは ありません");
+  nextButton.setAttribute("aria-label", currentPageIndex < total - 1 ? `つぎのページ、${pageTitle(pages[currentPageIndex + 1])}へ` : "つぎのページは ありません");
   [...pageDots.children].forEach((dot, index) => dot.classList.toggle("is-current", index === currentPageIndex));
-}
-
-function updateSceneSound() {
-  const scene = pages[currentPageIndex].dataset.scene || "departure";
-  window.bookSound?.setScene(scene);
 }
 
 function preloadNearbyImages(index) {
@@ -147,8 +120,6 @@ function goToPage(index, options = {}) {
   setPageAccessibility(index);
   updateNavigation();
   preloadNearbyImages(index);
-  updateSceneSound();
-
   if (options.history !== "none") updateUrl(index, options.history === "replace");
   pageAnnouncement.textContent = `${index + 1}ページ、${pageTitle(newPage)}`;
 
@@ -180,7 +151,6 @@ function initializeBook() {
   setPageAccessibility(initialIndex);
   updateNavigation();
   preloadNearbyImages(initialIndex);
-  updateSceneSound();
   if (window.location.hash !== `#page-${pages[initialIndex].dataset.pageId}`) updateUrl(initialIndex, true);
 }
 
@@ -240,33 +210,7 @@ document.querySelectorAll("[data-character]").forEach((card) => {
       speech.textContent = state.quote.replace(/[「」]/g, "");
       image.style.opacity = "1";
       speech.classList.add("is-speaking");
-      if (name === "puku") window.bookSound?.chirp();
     }, name === "puku" ? 70 : 330);
-  });
-});
-
-document.querySelectorAll(".scene-touch").forEach((button) => {
-  button.addEventListener("click", () => {
-    const effect = button.dataset.effect;
-    const imageArea = button.closest(".illustration-leaf");
-    const symbols = EFFECTS[effect];
-    for (let index = 0; index < 7; index += 1) {
-      const particle = document.createElement("span");
-      particle.className = "effect-particle";
-      particle.textContent = symbols[index % symbols.length];
-      particle.style.setProperty("--x", `${18 + Math.random() * 64}%`);
-      particle.style.setProperty("--y", `${48 + Math.random() * 34}%`);
-      particle.style.setProperty("--size", `${1 + Math.random() * 1.2}rem`);
-      particle.style.setProperty("--drift", `${-45 + Math.random() * 90}px`);
-      particle.style.setProperty("--spin", `${-25 + Math.random() * 50}deg`);
-      imageArea.appendChild(particle);
-      window.setTimeout(() => particle.remove(), 1450);
-    }
-    const sceneName = button.closest("[data-scene]").dataset.scene;
-    reactionOutput.textContent = SCENES[sceneName].reaction;
-    if (effect === "bird") window.bookSound?.chirp();
-    if (effect === "river") window.bookSound?.splash();
-    if (["grass", "pebble", "wind"].includes(effect)) window.bookSound?.step();
   });
 });
 

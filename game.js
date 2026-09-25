@@ -172,9 +172,7 @@
       won = true;
       playing = false;
       messageOutput.textContent = player.collected === 5 ? "ふたりで かんぺき！" : `ふたりで 山頂！ おにぎり ${player.collected}こ`;
-      window.bookSound?.chirp();
     }
-    if (player.grounded && Math.abs(player.vx) > 0 && frame % 16 === 0) window.bookSound?.step();
     cameraX += ((player.x - 230) - cameraX) * 0.08;
     cameraX = Math.max(0, Math.min(GAME.worldWidth - GAME.width, cameraX));
     frame += 1;
