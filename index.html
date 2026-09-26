@@ -7,7 +7,7 @@
   <meta name="description" content="げんきな ぷくと のんびりやの もちと いっしょに、1ページずつ やまを あるく デジタルえほんです。">
   <title>ぷくともちの やまあるき</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect rx='15' width='64' height='64' fill='%2328bdf2'/%3E%3Cpath d='M5 52 25 20l11 18 8-12 15 26Z' fill='%237fd34e' stroke='%231c285c' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='49' cy='14' r='7' fill='%23ffe05d'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=storybook-4">
+  <link rel="stylesheet" href="styles.css?v=storybook-5">
 </head>
 <body>
   <a class="skip-link" href="#book-controls">ページおくりへ いどう</a>
@@ -62,24 +62,31 @@
           </div>
         </article>
 
+        <article class="book-page book-page--story" data-page-id="bento" data-scene="snack" aria-hidden="true" inert>
+          <div class="book-spread book-spread--reverse">
+            <div class="illustration-leaf"><img src="assets/story-bento.jpg" alt="けしきの いい やまみちで おべんとうを たべる ぷくともち" loading="lazy"></div>
+            <div class="story-leaf"><span class="chapter-number">06</span><p class="scene-label">おべんとう</p><h2 data-page-title tabindex="-1">いただきます！</h2><p>けしきの いい いわに すわって、<br>ぷくは にこにこ、もちは ゆっくり。</p><p class="character-note"><b>ぷく</b>「おいしいね！」<br><b>もち</b>「ゆっくり たべよう」</p></div>
+          </div>
+        </article>
+
         <article class="book-page book-page--story" data-page-id="snack" data-scene="snack" aria-hidden="true" inert>
           <div class="book-spread book-spread--reverse">
             <div class="illustration-leaf"><img src="assets/story-6.jpg" alt="やまで おにぎりを たべる ぷくともち" loading="lazy"></div>
-            <div class="story-leaf"><span class="chapter-number">06</span><p class="scene-label">おにぎり</p><h2 data-page-title tabindex="-1">いちばんの ごちそう！</h2><p>たくさん あるいた あとの おにぎりは、<br>いつもより ずっと おいしい！</p><p class="character-note"><b>ぷく</b>「もう ひとつ！」<br><b>もち</b>「まずは ひとやすみ」</p></div>
+            <div class="story-leaf"><span class="chapter-number">07</span><p class="scene-label">おにぎり</p><h2 data-page-title tabindex="-1">いちばんの ごちそう！</h2><p>たくさん あるいた あとの おにぎりは、<br>いつもより ずっと おいしい！</p><p class="character-note"><b>ぷく</b>「もう ひとつ！」<br><b>もち</b>「まずは ひとやすみ」</p></div>
           </div>
         </article>
 
         <article class="book-page book-page--story" data-page-id="summit" data-scene="summit" aria-hidden="true" inert>
           <div class="book-spread">
             <div class="illustration-leaf illustration-leaf--summit"><img src="assets/story-7.jpg" alt="やまの てっぺんで よろこぶ ぷくともち" loading="lazy"></div>
-            <div class="story-leaf"><span class="chapter-number">07</span><p class="scene-label">てっぺん</p><h2 data-page-title tabindex="-1">やったー！</h2><p>はやさは ちがっても、ついたのは<br>ふたり いっしょです。</p></div>
+            <div class="story-leaf"><span class="chapter-number">08</span><p class="scene-label">てっぺん</p><h2 data-page-title tabindex="-1">やったー！</h2><p>はやさは ちがっても、ついたのは<br>ふたり いっしょです。</p></div>
           </div>
         </article>
 
         <article class="book-page book-page--story book-page--sunset" data-page-id="sunset" data-scene="sunset" aria-hidden="true" inert>
           <div class="book-spread book-spread--reverse">
             <div class="illustration-leaf illustration-leaf--sunset"><img src="assets/story-8.jpg" alt="ゆうやけを ならんで みる ぷくともち" loading="lazy"></div>
-            <div class="story-leaf"><span class="chapter-number">08</span><p class="scene-label">ゆうやけ</p><h2 data-page-title tabindex="-1">あしたも きれいかな</h2><p>かえる まえに、そらが むらさきに なるまで<br>ふたりで ならんで ながめました。</p></div>
+            <div class="story-leaf"><span class="chapter-number">09</span><p class="scene-label">ゆうやけ</p><h2 data-page-title tabindex="-1">あしたも きれいかな</h2><p>かえる まえに、そらが むらさきに なるまで<br>ふたりで ならんで ながめました。</p></div>
           </div>
         </article>
 
@@ -92,7 +99,7 @@
 
       <nav class="book-controls" id="book-controls" aria-label="えほんの ページおくり">
         <button class="page-button page-button--prev" id="page-prev" type="button" aria-label="まえの ページへ"><span aria-hidden="true">←</span> まえへ</button>
-        <div class="page-progress"><span id="page-status" aria-live="polite" aria-label="いまのページ / ぜんページ">1 / 10</span><span class="page-dots" id="page-dots" aria-hidden="true"></span></div>
+        <div class="page-progress"><span id="page-status" aria-live="polite" aria-label="いまのページ / ぜんページ">1 / 11</span><span class="page-dots" id="page-dots" aria-hidden="true"></span></div>
         <button class="page-button page-button--next" id="page-next" type="button" aria-label="つぎの ページへ">つぎへ <span aria-hidden="true">→</span></button>
       </nav>
       <p class="sr-only" id="page-announcement" aria-live="polite"></p>
@@ -107,13 +114,14 @@
         <button type="button" data-album-index="0"><img src="assets/story-2.jpg" alt="もりを あるいた おもいで" loading="lazy"><span>もり</span></button>
         <button type="button" data-album-index="1"><img src="assets/story-3.jpg" alt="かわを わたった おもいで" loading="lazy"><span>かわ</span></button>
         <button type="button" data-album-index="2"><img src="assets/story-5.jpg" alt="やまで きゅうけいした おもいで" loading="lazy"><span>きゅうけい</span></button>
-        <button type="button" data-album-index="3"><img src="assets/story-6.jpg" alt="おにぎりを たべた おもいで" loading="lazy"><span>おにぎり</span></button>
-        <button type="button" data-album-index="4"><img src="assets/story-7.jpg" alt="てっぺんに ついた おもいで" loading="lazy"><span>てっぺん</span></button>
-        <button type="button" data-album-index="5"><img src="assets/story-8.jpg" alt="ゆうやけを ながめた おもいで" loading="lazy"><span>ゆうやけ</span></button>
+        <button type="button" data-album-index="3"><img src="assets/story-bento.jpg" alt="おべんとうを たべた おもいで" loading="lazy"><span>おべんとう</span></button>
+        <button type="button" data-album-index="4"><img src="assets/story-6.jpg" alt="おにぎりを たべた おもいで" loading="lazy"><span>おにぎり</span></button>
+        <button type="button" data-album-index="5"><img src="assets/story-7.jpg" alt="てっぺんに ついた おもいで" loading="lazy"><span>てっぺん</span></button>
+        <button type="button" data-album-index="6"><img src="assets/story-8.jpg" alt="ゆうやけを ながめた おもいで" loading="lazy"><span>ゆうやけ</span></button>
       </div>
     </div>
   </dialog>
 
-  <script src="app.js?v=storybook-4"></script>
+  <script src="app.js?v=storybook-5"></script>
 </body>
 </html>

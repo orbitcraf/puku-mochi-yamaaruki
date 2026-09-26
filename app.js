@@ -4,6 +4,7 @@ const ALBUM_ITEMS = [
   { image: "assets/story-2.jpg", alt: "もりを あるく ぷくともち", title: "もりの におい", description: "はっぱの すきまから、まるい ひかりが たくさん おちてきました。" },
   { image: "assets/story-3.jpg", alt: "かわを わたる ぷくともち", title: "かわは きらきら", description: "ぷくは さんぽで、もちは ななほで。つめたい みずを わたりました。" },
   { image: "assets/story-5.jpg", alt: "きゅうけいする ぷくともち", title: "ひとやすみ", description: "いそがない じかんも、やまあるきの たいせつな おもいでです。" },
+  { image: "assets/story-bento.jpg", alt: "おべんとうを たべる ぷくともち", title: "やまの おべんとう", description: "ひろい けしきを みながら、ぷくは にこにこ、もちは ゆっくり たべました。" },
   { image: "assets/story-6.jpg", alt: "おにぎりを たべる ぷくともち", title: "いちばんの ごちそう", description: "たくさん あるいた あとの おにぎりは、いつもより ずっと おいしい！" },
   { image: "assets/story-7.jpg", alt: "てっぺんで よろこぶ ぷくともち", title: "てっぺん！", description: "ちがう あるきかたでも、ふたりで おなじ けしきに あえました。" },
   { image: "assets/story-8.jpg", alt: "ゆうやけを みる ぷくともち", title: "ふたりの ゆうやけ", description: "しずかな そらを、ことばに しないで ながめました。" }
