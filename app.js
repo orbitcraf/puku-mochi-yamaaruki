@@ -1,27 +1,12 @@
 "use strict";
 
-const CHARACTER_STATES = {
-  puku: [
-    { image: "assets/puku-1.png", alt: "元気に手を振るぷく", quote: "「いくぞー！」" },
-    { image: "assets/puku-2.png", alt: "大きくジャンプするぷく", quote: "「ぴょーん！」" },
-    { image: "assets/puku-3.png", alt: "虫眼鏡で何かを見つけたぷく", quote: "「みつけた！」" },
-    { image: "assets/puku-4.png", alt: "おにぎりを食べるぷく", quote: "「おいしい！」" }
-  ],
-  mochi: [
-    { image: "assets/mochi-1.png", alt: "のんびり立っているもち", quote: "「ゆっくりね」" },
-    { image: "assets/mochi-2.png", alt: "ちょこんと座るもち", quote: "「ちょっと やすむ…」" },
-    { image: "assets/mochi-3.png", alt: "気持ちよさそうに眠るもち", quote: "「すぅ…」" },
-    { image: "assets/mochi-4.png", alt: "景色をゆっくり見るもち", quote: "「まだ のぼるの？」" }
-  ]
-};
-
 const ALBUM_ITEMS = [
-  { image: "assets/story-2.jpg", alt: "森を歩くぷくともち", title: "森の におい", description: "葉っぱのすきまから、まるい光がたくさん落ちてきました。" },
-  { image: "assets/story-3.jpg", alt: "川を渡るぷくともち", title: "川は きらきら", description: "ぷくは三歩で、もちは七歩で。冷たい水を渡りました。" },
-  { image: "assets/story-5.jpg", alt: "休憩するぷくともち", title: "ひとやすみ", description: "急がない時間も、山あるきの大切な思い出です。" },
-  { image: "assets/story-6.jpg", alt: "おにぎりを食べるぷくともち", title: "いちばんの ごちそう", description: "たくさん歩いたあとのおにぎりは、いつもより大きな味。" },
-  { image: "assets/story-7.jpg", alt: "山頂で喜ぶぷくともち", title: "てっぺん！", description: "違う歩き方でも、ふたりで同じ景色に会えました。" },
-  { image: "assets/story-8.jpg", alt: "夕焼けを見るぷくともち", title: "ふたりの ゆうやけ", description: "しずかな空を、ことばにしないで眺めました。" }
+  { image: "assets/story-2.jpg", alt: "もりを あるく ぷくともち", title: "もりの におい", description: "はっぱの すきまから、まるい ひかりが たくさん おちてきました。" },
+  { image: "assets/story-3.jpg", alt: "かわを わたる ぷくともち", title: "かわは きらきら", description: "ぷくは さんぽで、もちは ななほで。つめたい みずを わたりました。" },
+  { image: "assets/story-5.jpg", alt: "きゅうけいする ぷくともち", title: "ひとやすみ", description: "いそがない じかんも、やまあるきの たいせつな おもいでです。" },
+  { image: "assets/story-6.jpg", alt: "おにぎりを たべる ぷくともち", title: "いちばんの ごちそう", description: "たくさん あるいた あとの おにぎりは、いつもより ずっと おいしい！" },
+  { image: "assets/story-7.jpg", alt: "てっぺんで よろこぶ ぷくともち", title: "てっぺん！", description: "ちがう あるきかたでも、ふたりで おなじ けしきに あえました。" },
+  { image: "assets/story-8.jpg", alt: "ゆうやけを みる ぷくともち", title: "ふたりの ゆうやけ", description: "しずかな そらを、ことばに しないで ながめました。" }
 ];
 
 const pages = [...document.querySelectorAll(".book-page")];
@@ -182,36 +167,6 @@ viewport.addEventListener("pointerup", (event) => {
   swipeStart = null;
   if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.2) return;
   goToPage(currentPageIndex + (deltaX < 0 ? 1 : -1));
-});
-
-document.querySelectorAll("[data-character]").forEach((card) => {
-  const name = card.dataset.character;
-  const states = CHARACTER_STATES[name];
-  const image = card.querySelector("[data-character-image]");
-  const quote = card.querySelector("[data-character-quote]");
-  const speech = card.querySelector("[data-character-speech]");
-  let stateIndex = 0;
-  let changeTimer;
-
-  card.addEventListener("click", () => {
-    stateIndex = (stateIndex + 1) % states.length;
-    const state = states[stateIndex];
-    window.clearTimeout(changeTimer);
-    card.classList.remove("is-changing", "is-sleeping");
-    speech.classList.remove("is-speaking");
-    void card.offsetWidth;
-    if (name === "puku") card.classList.add("is-changing");
-    if (name === "mochi" && stateIndex === 2) card.classList.add("is-sleeping");
-    image.style.opacity = "0";
-    changeTimer = window.setTimeout(() => {
-      image.src = state.image;
-      image.alt = state.alt;
-      quote.textContent = state.quote;
-      speech.textContent = state.quote.replace(/[「」]/g, "");
-      image.style.opacity = "1";
-      speech.classList.add("is-speaking");
-    }, name === "puku" ? 70 : 330);
-  });
 });
 
 const dialog = document.getElementById("album-dialog");
